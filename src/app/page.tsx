@@ -19,6 +19,7 @@ export default async function HomePage() {
     <HydrateClient>
       <PageHeader
         title="Tasks"
+        description="Create, edit and delete your tasks."
         action={
           <Link href="/tasks/new" className="button">
             New task

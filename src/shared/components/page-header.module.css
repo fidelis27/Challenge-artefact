@@ -1,12 +1,29 @@
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 24px;
 }
 
+.text {
+  min-width: 0;
+}
+
 .title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.description {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+@media (max-width: 520px) {
+  .title {
+    font-size: 1.5rem;
+  }
 }

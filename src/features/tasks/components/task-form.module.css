@@ -1,13 +1,30 @@
 .form {
   display: grid;
   gap: 20px;
-  padding: 20px;
+  max-width: 640px;
+  padding: 24px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+@media (max-width: 520px) {
+  .form {
+    padding: 18px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
 }

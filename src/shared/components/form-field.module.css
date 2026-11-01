@@ -4,6 +4,7 @@
 }
 
 .field label {
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -14,13 +15,42 @@
   padding: 10px 12px;
   font: inherit;
   color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.field input:hover:not(:disabled):not([aria-invalid="true"]),
+.field textarea:hover:not(:disabled):not([aria-invalid="true"]) {
+  border-color: var(--muted);
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.field input:disabled,
+.field textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .field textarea {
   resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
 }
 
 .field input[aria-invalid="true"],
@@ -28,15 +58,22 @@
   border-color: var(--danger);
 }
 
+.field input[aria-invalid="true"]:focus-visible,
+.field textarea[aria-invalid="true"]:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 25%, transparent);
+}
+
 .error {
   margin: 0;
   color: var(--danger);
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .hint {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   color: var(--muted);
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }

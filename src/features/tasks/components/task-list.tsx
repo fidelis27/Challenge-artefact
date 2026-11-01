@@ -6,6 +6,7 @@ import type { Task } from "../domain/task";
 import { useDeleteTask } from "../hooks/use-delete-task";
 import { useTaskList } from "../hooks/use-task-list";
 import { TaskItem } from "./task-item";
+import { TaskListSkeleton } from "./task-list-skeleton";
 import styles from "./task-list.module.css";
 
 /** Container: wires the data hooks to the presentational pieces. */
@@ -20,7 +21,7 @@ export function TaskList() {
   }
 
   if (list.isLoading) {
-    return <p role="status">Loading tasks…</p>;
+    return <TaskListSkeleton />;
   }
 
   if (list.isError) {
@@ -34,9 +35,13 @@ export function TaskList() {
 
   if (list.tasks.length === 0) {
     return (
-      <p className={styles.muted}>
-        No tasks yet. <Link href="/tasks/new">Create the first one</Link>.
-      </p>
+      <div className={styles.empty}>
+        <h2 className={styles.emptyTitle}>No tasks yet</h2>
+        <p className={styles.emptyText}>Create your first task to see it here.</p>
+        <Link href="/tasks/new" className="button">
+          New task
+        </Link>
+      </div>
     );
   }
 
@@ -44,7 +49,7 @@ export function TaskList() {
 
   return (
     <>
-      <p className={styles.muted} aria-live="polite">
+      <p className={styles.summary} aria-live="polite">
         Showing {list.tasks.length} of {list.total} {list.total === 1 ? "task" : "tasks"}
       </p>
 
@@ -63,7 +68,11 @@ export function TaskList() {
       {/* Observed by the infinite-scroll hook: reaching it loads the next page. */}
       <div ref={list.sentinelRef} aria-hidden="true" />
 
-      {list.isFetchingNextPage && <p role="status">Loading more tasks…</p>}
+      {list.isFetchingNextPage && (
+        <p role="status" className={styles.status}>
+          Loading more tasks…
+        </p>
+      )}
 
       {list.isFetchNextPageError && (
         <ErrorBanner

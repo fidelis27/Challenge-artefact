@@ -1,17 +1,101 @@
+.summary {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* One panel with divided rows, instead of a stack of separate cards. */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
 }
 
-.muted {
-  color: var(--muted);
+.list > li + li {
+  border-top: 1px solid var(--line);
 }
 
 .end {
-  margin-top: 24px;
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.status {
+  margin: 16px 0 0;
   text-align: center;
   color: var(--muted);
+}
+
+/* ---- Empty state ---- */
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 56px 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.emptyText {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+/* ---- Loading skeleton ---- */
+.skeletonRow {
+  display: grid;
+  gap: 10px;
+  padding: 18px 20px;
+}
+
+.bar {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--line) 25%,
+    var(--surface-hover) 50%,
+    var(--line) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.barTitle {
+  width: 42%;
+  height: 14px;
+}
+
+.barText {
+  width: 78%;
+}
+
+.barMeta {
+  width: 24%;
+  height: 10px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
