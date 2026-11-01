@@ -5,11 +5,26 @@
 export type ApiError = {
   message: string;
   data?: {
+    code?: string;
     zodError?: { fieldErrors: Record<string, string[] | undefined> } | null;
   } | null;
 };
 
 export type FieldErrors<F extends string> = Partial<Record<F, string>>;
+
+/** Maps transport error codes to short, user-facing messages. */
+export function toUserMessage(error: ApiError): string {
+  if (!error.data) return "Could not reach the server. Check your connection.";
+
+  switch (error.data.code) {
+    case "NOT_FOUND":
+      return "This task no longer exists. The list was updated.";
+    case "BAD_REQUEST":
+      return "Please check the highlighted fields.";
+    default:
+      return "Something went wrong. Please try again.";
+  }
+}
 
 /** Keeps only the first message of each known field. */
 export function firstFieldErrors<F extends string>(

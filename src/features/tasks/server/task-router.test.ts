@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { createTRPCClient, httpLink } from "@trpc/client";
 import { createCallerFactory, router } from "@/server/trpc";
 import { createInMemoryTaskRepository } from "./in-memory-task-repository";
 import { createTaskRouter } from "./task-router";
@@ -58,6 +59,35 @@ describe("task router", () => {
     expect(message).toContain("Title is required.");
     expect(message).not.toMatch(/^\[/);
     expect(body.error?.data?.zodError).toBeTruthy();
+  });
+
+  it("hides unexpected service errors from the client", async () => {
+    const repository = createInMemoryTaskRepository();
+    const service = createTaskService({
+      ...repository,
+      async create() {
+        throw new Error("database credentials leaked");
+      },
+    });
+    const testRouter = router({ task: createTaskRouter(service) });
+    const client = createTRPCClient<typeof testRouter>({
+      links: [
+        httpLink({
+          url: "http://localhost/api/trpc",
+          fetch: async (url, options) =>
+            fetchRequestHandler({
+              endpoint: "/api/trpc",
+              req: new Request(url, options),
+              router: testRouter,
+              createContext: async () => ({}),
+            }),
+        }),
+      ],
+    });
+
+    await expect(client.task.create.mutate({ title: "Valid title" })).rejects.toMatchObject({
+      message: "Internal server error.",
+    });
   });
 
   it("rejects an empty title on update", async () => {
