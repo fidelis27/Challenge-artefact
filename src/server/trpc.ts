@@ -25,6 +25,19 @@ const t = initTRPC.context<Context>().create({
   },
 });
 
+const timing = t.middleware(async ({ path, type, next }) => {
+  const start = Date.now();
+  const result = await next();
+
+  if (process.env.NODE_ENV !== "test") {
+    const status = result.ok ? "ok" : `error ${result.error.code}`;
+    console.info(`[trpc] ${type} ${path} ${status} ${Date.now() - start}ms`);
+  }
+
+  return result;
+});
+
 export const router = t.router;
-export const publicProcedure = t.procedure;
+// This is the extension point for auth or rate limiting (e.g. protectedProcedure.use(isAuthed)).
+export const publicProcedure = t.procedure.use(timing);
 export const createCallerFactory = t.createCallerFactory;
