@@ -126,6 +126,7 @@ Business rules are small pure functions, tested in isolation:
 - **Update replaces `title` and `description`.** Sending an empty description clears it.
 - **The router → service → repository layers are intentional.** They let a real database replace the in-memory store by changing only `task-container.ts`, and let the service be tested with a fake repository and clock. For a disposable project with no expected database, keeping the logic in the router would be simpler; this separation is a deliberate trade-off.
 - **The tRPC timing middleware** logs procedure type, path, status and duration without input data. It is also the extension point for authentication and rate limiting.
+- **The server returns technical error codes and messages; the client maps them to user-friendly text.** A custom error catalog was considered but rejected as over-engineering with only one domain error.
 
 ## Tests
 

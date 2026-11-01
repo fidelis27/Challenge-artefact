@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { getFieldErrors, type ApiError } from "@/shared/lib/api-error";
+import { getFieldErrors, toUserMessage, type ApiError } from "@/shared/lib/api-error";
 import { useTRPC } from "@/trpc/client";
 import type { TaskFormErrors } from "../domain/task-form";
 import { TASK_FIELDS, type TaskFields } from "../domain/task-schema";
@@ -35,7 +35,7 @@ export function useSaveTask({ onFieldErrors }: Options) {
       toast.error("Check the form fields.");
       return;
     }
-    toast.error(error.message);
+    toast.error(toUserMessage(error));
   }
 
   const create = useMutation(

@@ -13,10 +13,19 @@ const t = initTRPC.context<Context>().create({
   // Expose Zod field errors to the client so forms can show them next to the inputs.
   errorFormatter({ shape, error }) {
     const zodError = error.cause instanceof ZodError ? error.cause : null;
+    const isInternalError = shape.data.code === "INTERNAL_SERVER_ERROR";
+
+    if (isInternalError && process.env.NODE_ENV !== "test") {
+      console.error(error);
+    }
 
     return {
       ...shape,
-      message: zodError ? zodError.issues.map((issue) => issue.message).join(" ") : shape.message,
+      message: zodError
+        ? zodError.issues.map((issue) => issue.message).join(" ")
+        : isInternalError
+          ? "Internal server error."
+          : shape.message,
       data: {
         ...shape.data,
         zodError: zodError ? zodError.flatten() : null,
