@@ -1,4 +1,4 @@
-# Challenge-artefact
+# Task Manager (Next.js 15 + tRPC)
 
 A small task manager built with **Next.js 15 (App Router)** and **tRPC v11**. Tasks live in server memory (no database). The list is server-side rendered and loads more tasks as you scroll.
 
