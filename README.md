@@ -13,15 +13,15 @@ A small task manager built with **Next.js 15 (App Router)** and **tRPC v11**. Ta
 
 ## Tool choices
 
-| Tool | Why | Alternative considered |
-| ---- | --- | ----------------------- |
-| tRPC + TanStack Query | End-to-end types, query caching, and infinite pagination | Server Actions do not provide query caching or infinite pagination |
-| Zod | One schema validates inputs on both client and server | Separate validation schemas can drift |
-| No Redux/Zustand | All application data is server state managed by React Query | A client-state store would duplicate server state |
-| No React Hook Form | The form has only two fields | A form library would add abstraction for a small form |
-| CSS Modules | Component-scoped styles with zero dependencies | Tailwind adds a styling dependency |
-| Vitest | Native TypeScript and ESM support | Jest requires additional configuration for this setup |
-| Playwright | Integrated web server support and a natural fit for Next.js E2E tests | Cypress |
+| Tool                  | Why                                                                   | Alternative considered                                             |
+| --------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| tRPC + TanStack Query | End-to-end types, query caching, and infinite pagination              | Server Actions do not provide query caching or infinite pagination |
+| Zod                   | One schema validates inputs on both client and server                 | Separate validation schemas can drift                              |
+| No Redux/Zustand      | All application data is server state managed by React Query           | A client-state store would duplicate server state                  |
+| No React Hook Form    | The form has only two fields                                          | A form library would add abstraction for a small form              |
+| CSS Modules           | Component-scoped styles with zero dependencies                        | Tailwind adds a styling dependency                                 |
+| Vitest                | Native TypeScript and ESM support                                     | Jest requires additional configuration for this setup              |
+| Playwright            | Integrated web server support and a natural fit for Next.js E2E tests | Cypress                                                            |
 
 ## Screenshots
 
@@ -47,11 +47,13 @@ npm start
 
 ## Scripts
 
-| Script | What it does |
-| ------ | ------------ |
-| `npm test` | Runs the unit tests (Vitest) |
-| `npm run typecheck` | Type-checks the whole project |
-| `npm run test:e2e`  | Runs the end-to-end tests (Playwright) |
+| Script                 | What it does                           |
+| ---------------------- | -------------------------------------- |
+| `npm run lint`         | Runs ESLint                            |
+| `npm run format:check` | Checks formatting with Prettier        |
+| `npm test`             | Runs the unit tests (Vitest)           |
+| `npm run typecheck`    | Type-checks the whole project          |
+| `npm run test:e2e`     | Runs the end-to-end tests (Playwright) |
 
 The app starts with 25 sample tasks so the infinite scroll can be tried right away. Set `SEED_TASKS=0` for an empty list (or any other number).
 
@@ -64,12 +66,12 @@ The app starts with 25 sample tasks so the infinite scroll can be tried right aw
 
 The challenge uses Portuguese field names; the code uses English names by convention, with the same meaning for each field.
 
-| Challenge | Code | Type |
-| --------- | ---- | ---- |
-| `id` | `id` | string (UUID, generated) |
-| `titulo` | `title` | string, required |
-| `descricao` | `description` | string, optional |
-| `dataCriacao` | `createdAt` | ISO-8601 timestamp |
+| Challenge     | Code          | Type                     |
+| ------------- | ------------- | ------------------------ |
+| `id`          | `id`          | string (UUID, generated) |
+| `titulo`      | `title`       | string, required         |
+| `descricao`   | `description` | string, optional         |
+| `dataCriacao` | `createdAt`   | ISO-8601 timestamp       |
 
 - **Validation on both sides**: the same Zod schema is used by the form and by the API, so a task can never be created without a title.
 - **Meaningful errors**: `BAD_REQUEST` with per-field messages for invalid input, `NOT_FOUND` when a task does not exist (for example updating or deleting one that was already removed).
@@ -79,12 +81,12 @@ The challenge uses Portuguese field names; the code uses English names by conven
 
 ## Pages
 
-| Route               | Purpose                          |
-| ------------------- | -------------------------------- |
-| `/`                 | Task list (SSR) with delete      |
-| `/tasks/new`        | Create a task                    |
-| `/tasks/[id]/edit`  | Edit a task                      |
-| `/api/trpc/*`       | tRPC endpoint                    |
+| Route              | Purpose                     |
+| ------------------ | --------------------------- |
+| `/`                | Task list (SSR) with delete |
+| `/tasks/new`       | Create a task               |
+| `/tasks/[id]/edit` | Edit a task                 |
+| `/api/trpc/*`      | tRPC endpoint               |
 
 ## Architecture
 

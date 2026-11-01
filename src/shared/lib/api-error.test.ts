@@ -43,8 +43,8 @@ describe("toUserMessage", () => {
   });
 
   it("maps other codes to a generic message", () => {
-    expect(toUserMessage({ message: "technical details", data: { code: "INTERNAL_SERVER_ERROR" } })).toBe(
-      "Something went wrong. Please try again.",
-    );
+    expect(
+      toUserMessage({ message: "technical details", data: { code: "INTERNAL_SERVER_ERROR" } }),
+    ).toBe("Something went wrong. Please try again.");
   });
 });

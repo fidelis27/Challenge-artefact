@@ -22,9 +22,7 @@ export const trpc = createTRPCOptionsProxy({
 
 /** Ships the prefetched cache to the browser so client components start with data. */
 export function HydrateClient({ children }: { children: ReactNode }) {
-  return (
-    <HydrationBoundary state={dehydrate(getQueryClient())}>{children}</HydrationBoundary>
-  );
+  return <HydrationBoundary state={dehydrate(getQueryClient())}>{children}</HydrationBoundary>;
 }
 
 /** Direct, in-process caller for server code that needs a value (not a cached query). */

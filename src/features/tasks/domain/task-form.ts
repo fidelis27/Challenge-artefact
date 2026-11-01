@@ -5,8 +5,7 @@ export type TaskFormValues = { title: string; description: string };
 export type TaskFormErrors = FieldErrors<TaskField>;
 
 export type ValidationResult =
-  | { success: true; data: TaskFields }
-  | { success: false; errors: TaskFormErrors };
+  { success: true; data: TaskFields } | { success: false; errors: TaskFormErrors };
 
 /**
  * Validates a single field, for feedback while the user is filling the form.

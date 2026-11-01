@@ -52,7 +52,10 @@ describe("validateTaskField", () => {
   });
 
   it("reports the length limit of the title", () => {
-    const message = validateTaskField("title", { title: "x".repeat(TITLE_MAX + 1), description: "" });
+    const message = validateTaskField("title", {
+      title: "x".repeat(TITLE_MAX + 1),
+      description: "",
+    });
     expect(message).toContain(String(TITLE_MAX));
   });
 });
