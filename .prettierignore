@@ -1,0 +1,9 @@
+.next/
+node_modules/
+out/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+next-env.d.ts

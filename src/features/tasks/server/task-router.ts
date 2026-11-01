@@ -1,5 +1,10 @@
 import { publicProcedure, router } from "@/server/trpc";
-import { listTasksSchema, taskFieldsSchema, taskIdSchema, updateTaskSchema } from "../domain/task-schema";
+import {
+  listTasksSchema,
+  taskFieldsSchema,
+  taskIdSchema,
+  updateTaskSchema,
+} from "../domain/task-schema";
 import type { TaskService } from "./task-service";
 
 /**

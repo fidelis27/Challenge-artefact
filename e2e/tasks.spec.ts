@@ -45,7 +45,9 @@ test("edits a task", async ({ page }) => {
   await page.getByRole("button", { name: "Save changes" }).click();
 
   await expect(page.getByText("Task updated successfully.")).toBeVisible();
-  await expect(page.getByRole("heading", { name: updatedTitle, exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: updatedTitle, exact: true }).first(),
+  ).toBeVisible();
 });
 
 test("deletes a task after confirmation", async ({ page }) => {
