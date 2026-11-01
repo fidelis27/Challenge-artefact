@@ -8,7 +8,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Task Manager",
-  description: "Artefact challenge: Next.js 15 + tRPC with in-memory storage.",
+  description: "Task manager: Next.js 15 + tRPC with in-memory storage.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
