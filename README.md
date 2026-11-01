@@ -125,6 +125,7 @@ Business rules are small pure functions, tested in isolation:
 - **Plain `useState` for form state** plus the shared Zod schema, instead of a form library. The form has two fields.
 - **Update replaces `title` and `description`.** Sending an empty description clears it.
 - **The router → service → repository layers are intentional.** They let a real database replace the in-memory store by changing only `task-container.ts`, and let the service be tested with a fake repository and clock. For a disposable project with no expected database, keeping the logic in the router would be simpler; this separation is a deliberate trade-off.
+- **The tRPC timing middleware** logs procedure type, path, status and duration without input data. It is also the extension point for authentication and rate limiting.
 
 ## Tests
 
@@ -137,5 +138,6 @@ The Playwright tests run in series because all requests share one Node.js proces
 ## Possible next steps
 
 - A database-backed `TaskRepository` (for example Postgres with Drizzle) for real persistence and multi-instance deployments.
+- Authentication and rate limiting via tRPC middleware.
 - Optimistic updates for delete.
 - Search, filters and a "completed" status.
