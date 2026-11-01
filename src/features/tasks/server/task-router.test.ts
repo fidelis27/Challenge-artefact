@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { createCallerFactory, router } from "@/server/trpc";
 import { createInMemoryTaskRepository } from "./in-memory-task-repository";
 import { createTaskRouter } from "./task-router";
@@ -34,6 +35,29 @@ describe("task router", () => {
   it("rejects an empty or whitespace-only title", async () => {
     await expect(api.create({ title: "" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     await expect(api.create({ title: "   " })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("returns a readable validation message for an empty title", async () => {
+    const response = await fetchRequestHandler({
+      endpoint: "/api/trpc",
+      req: new Request("http://localhost/api/trpc/task.create", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ json: { title: "" } }),
+      }),
+      router: router({
+        task: createTaskRouter(createTaskService(createInMemoryTaskRepository())),
+      }),
+      createContext: async () => ({}),
+    });
+    const body = (await response.json()) as {
+      error?: { message?: string; data?: { zodError?: unknown } };
+    };
+    const message = body.error?.message ?? "";
+
+    expect(message).toContain("Title is required.");
+    expect(message).not.toMatch(/^\[/);
+    expect(body.error?.data?.zodError).toBeTruthy();
   });
 
   it("rejects an empty title on update", async () => {
