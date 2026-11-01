@@ -2,6 +2,27 @@
 
 A small task manager built with **Next.js 15 (App Router)** and **tRPC v11**. Tasks live in server memory (no database). The list is server-side rendered and loads more tasks as you scroll.
 
+## Highlights
+
+- Server-rendered task HTML is verified without browser JavaScript in [`e2e/tasks.spec.ts`](./e2e/tasks.spec.ts).
+- Cursor pagination remains valid when tasks are deleted during scrolling in [`pagination.ts`](./src/features/tasks/server/pagination.ts) and [`pagination.test.ts`](./src/features/tasks/server/pagination.test.ts).
+- One Zod schema is shared by the client and server in [`task-schema.ts`](./src/features/tasks/domain/task-schema.ts).
+- The service depends on a repository interface, wired by the composition root in [`task-service.ts`](./src/features/tasks/server/task-service.ts) and [`task-container.ts`](./src/features/tasks/server/task-container.ts).
+- tRPC procedures share an extension middleware in [`trpc.ts`](./src/server/trpc.ts).
+- GitHub Actions runs unit tests, typecheck, build, and browser E2E tests in [`ci.yml`](./.github/workflows/ci.yml).
+
+## Tool choices
+
+| Tool | Why | Alternative considered |
+| ---- | --- | ----------------------- |
+| tRPC + TanStack Query | End-to-end types, query caching, and infinite pagination | Server Actions do not provide query caching or infinite pagination |
+| Zod | One schema validates inputs on both client and server | Separate validation schemas can drift |
+| No Redux/Zustand | All application data is server state managed by React Query | A client-state store would duplicate server state |
+| No React Hook Form | The form has only two fields | A form library would add abstraction for a small form |
+| CSS Modules | Component-scoped styles with zero dependencies | Tailwind adds a styling dependency |
+| Vitest | Native TypeScript and ESM support | Jest requires additional configuration for this setup |
+| Playwright | Integrated web server support and a natural fit for Next.js E2E tests | Cypress |
+
 ## Screenshots
 
 - [Task list](docs/screenshots/list.png)
@@ -24,12 +45,12 @@ npm run build
 npm start
 ```
 
-Other scripts:
+## Scripts
 
-| Script              | What it does                         |
-| ------------------- | ------------------------------------ |
-| `npm test`          | Runs the unit tests (Vitest)         |
-| `npm run typecheck` | Type-checks the whole project        |
+| Script | What it does |
+| ------ | ------------ |
+| `npm test` | Runs the unit tests (Vitest) |
+| `npm run typecheck` | Type-checks the whole project |
 | `npm run test:e2e`  | Runs the end-to-end tests (Playwright) |
 
 The app starts with 25 sample tasks so the infinite scroll can be tried right away. Set `SEED_TASKS=0` for an empty list (or any other number).
@@ -114,15 +135,12 @@ Business rules are small pure functions, tested in isolation:
 
 ## Key decisions
 
-- **tRPC v11 with the TanStack Query integration** (`@trpc/tanstack-react-query`). It is the supported way to prefetch on the server (React Server Components) and hydrate on the client.
 - **No self-HTTP call during SSR.** The server prefetches by calling the router in-process.
 - **The store is kept on `globalThis`** (inside `task-container.ts`). In `next dev`, hot reload re-evaluates modules, and route handlers and server components can live in separate module graphs. A plain module-level variable would reset or split the list.
 - **Cursor pagination with a monotonic `seq`**, not an offset or the id of the last item. The cursor stays valid when a task is deleted while the user is scrolling.
 - **`createdAt` is an ISO string**, so the API needs no custom serializer (like superjson) and is easy to read in any client.
 - **Dates use a fixed time zone (UTC)** to avoid React hydration mismatches between the server and the browser.
 - **Pages that read the list are `force-dynamic`.** Without this, `next build` would freeze the initial list into static HTML.
-- **CSS Modules** instead of a styling framework: zero dependencies, works with Server Components, and enough for a layout that does not need an elaborate design.
-- **Plain `useState` for form state** plus the shared Zod schema, instead of a form library. The form has two fields.
 - **Update replaces `title` and `description`.** Sending an empty description clears it.
 - **The router → service → repository layers are intentional.** They let a real database replace the in-memory store by changing only `task-container.ts`, and let the service be tested with a fake repository and clock. For a disposable project with no expected database, keeping the logic in the router would be simpler; this separation is a deliberate trade-off.
 - **The tRPC timing middleware** logs procedure type, path, status and duration without input data. It is also the extension point for authentication and rate limiting.
@@ -136,9 +154,9 @@ Run the end-to-end tests with `npx playwright install chromium` once, then `npm 
 
 The Playwright tests run in series because all requests share one Node.js process with in-memory data. Tests that create or delete tasks use unique titles and never delete sample tasks.
 
-## Possible next steps
+## Production readiness
 
-- A database-backed `TaskRepository` (for example Postgres with Drizzle) for real persistence and multi-instance deployments.
-- Authentication and rate limiting via tRPC middleware.
-- Optimistic updates for delete.
-- Search, filters and a "completed" status.
+- Replace the in-memory `TaskRepository` with a persistent database for restart safety and multi-instance deployments.
+- Add authentication and rate limiting through tRPC middleware.
+- Add production observability, including centralized logs, metrics, and alerting.
+- Optional product improvements: optimistic delete, search, filters, and a completed status.
