@@ -9,6 +9,18 @@ export type ValidationResult =
   | { success: false; errors: TaskFormErrors };
 
 /**
+ * Validates a single field, for feedback while the user is filling the form.
+ * It runs the full schema and picks that field's message, so the rules stay in one place.
+ */
+export function validateTaskField(
+  field: keyof TaskFormValues,
+  values: TaskFormValues,
+): string | undefined {
+  const result = validateTaskForm(values);
+  return result.success ? undefined : result.errors[field];
+}
+
+/**
  * Validates the raw form values with the same schema the server uses,
  * returning either clean data or one message per invalid field.
  */

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormField } from "@/shared/components/form-field";
 import type { Task } from "../domain/task";
-import { DESCRIPTION_MAX } from "../domain/task-schema";
+import { DESCRIPTION_MAX, TITLE_MAX } from "../domain/task-schema";
 import { useTaskForm } from "../hooks/use-task-form";
 import styles from "./task-form.module.css";
 
@@ -16,7 +16,13 @@ export function TaskForm({ task }: { task?: Task }) {
   return (
     // noValidate: we show our own (Zod) messages instead of the browser's native bubbles.
     <form className={styles.form} onSubmit={form.submit} noValidate>
-      <FormField id="title" label="Title" required error={form.errors.title}>
+      <FormField
+        id="title"
+        label="Title"
+        required
+        error={form.errors.title}
+        hint={`${title.value.length}/${TITLE_MAX}`}
+      >
         {(controlProps) => (
           <input
             {...controlProps}
@@ -24,6 +30,7 @@ export function TaskForm({ task }: { task?: Task }) {
             type="text"
             value={title.value}
             onChange={(event) => title.onChange(event.target.value)}
+            onBlur={title.onBlur}
             disabled={form.isLocked}
             autoFocus
           />
@@ -43,6 +50,7 @@ export function TaskForm({ task }: { task?: Task }) {
             rows={5}
             value={description.value}
             onChange={(event) => description.onChange(event.target.value)}
+            onBlur={description.onBlur}
             disabled={form.isLocked}
           />
         )}

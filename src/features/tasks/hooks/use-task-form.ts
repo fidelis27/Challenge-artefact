@@ -1,15 +1,24 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import type { Task } from "../domain/task";
 import {
+  validateTaskField,
   validateTaskForm,
   type TaskFormErrors,
   type TaskFormValues,
 } from "../domain/task-form";
-import type { Task } from "../domain/task";
 import { useSaveTask } from "./use-save-task";
+
+type FieldName = keyof TaskFormValues;
 
 /**
  * Form state (plain `useState` hooks), client-side validation and submission.
  * Pass a `task` to edit it; omit it to create a new one.
+ *
+ * When validation runs:
+ * - on blur: the first time the user leaves a field, so they are not scolded while still typing;
+ * - on change: once a field has been visited (or has an error), so the message appears and
+ *   disappears live as the value becomes invalid or valid;
+ * - on submit: every field, and nothing is sent while any of them is invalid.
  */
 export function useTaskForm(task?: Task) {
   const [values, setValues] = useState<TaskFormValues>({
@@ -17,15 +26,27 @@ export function useTaskForm(task?: Task) {
     description: task?.description ?? "",
   });
   const [errors, setErrors] = useState<TaskFormErrors>({});
+  // A ref, not state: knowing which fields were visited never needs to re-render by itself.
+  const visited = useRef<Partial<Record<FieldName, boolean>>>({});
   const { save, isPending, isLocked } = useSaveTask({ onFieldErrors: setErrors });
 
-  /** Returns the change handler for one field and clears that field's error as the user types. */
-  function fieldProps(field: keyof TaskFormValues) {
+  function validateField(field: FieldName, nextValues: TaskFormValues) {
+    const message = validateTaskField(field, nextValues);
+    setErrors((current) => ({ ...current, [field]: message }));
+  }
+
+  /** Props for one field's input: its value plus change and blur handlers. */
+  function fieldProps(field: FieldName) {
     return {
       value: values[field],
       onChange: (value: string) => {
-        setValues((current) => ({ ...current, [field]: value }));
-        setErrors((current) => (current[field] ? { ...current, [field]: undefined } : current));
+        const nextValues = { ...values, [field]: value };
+        setValues(nextValues);
+        if (visited.current[field] || errors[field]) validateField(field, nextValues);
+      },
+      onBlur: () => {
+        visited.current[field] = true;
+        validateField(field, values);
       },
     };
   }
@@ -35,6 +56,7 @@ export function useTaskForm(task?: Task) {
 
     const result = validateTaskForm(values);
     if (!result.success) {
+      visited.current = { title: true, description: true };
       setErrors(result.errors);
       return;
     }
