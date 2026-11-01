@@ -33,6 +33,16 @@ The app starts with 25 sample tasks so the infinite scroll can be tried right aw
 
 - **CRUD via tRPC**: create, list, update and delete tasks.
 - **Task model**: `id` (UUID), `title` (required), `description` (optional), `createdAt` (ISO-8601 timestamp).
+
+The challenge uses Portuguese field names; the code uses English names by convention, with the same meaning for each field.
+
+| Challenge | Code | Type |
+| --------- | ---- | ---- |
+| `id` | `id` | string (UUID, generated) |
+| `titulo` | `title` | string, required |
+| `descricao` | `description` | string, optional |
+| `dataCriacao` | `createdAt` | ISO-8601 timestamp |
+
 - **Validation on both sides**: the same Zod schema is used by the form and by the API, so a task can never be created without a title.
 - **Meaningful errors**: `BAD_REQUEST` with per-field messages for invalid input, `NOT_FOUND` when a task does not exist (for example updating or deleting one that was already removed).
 - **SSR list**: the first page of tasks is fetched on the server and hydrated on the client, so the HTML already contains the tasks.
