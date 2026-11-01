@@ -117,6 +117,7 @@ Business rules are small pure functions, tested in isolation:
 - **CSS Modules** instead of a styling framework: zero dependencies, works with Server Components, and enough for a layout that does not need an elaborate design.
 - **Plain `useState` for form state** plus the shared Zod schema, instead of a form library. The form has two fields.
 - **Update replaces `title` and `description`.** Sending an empty description clears it.
+- **The router → service → repository layers are intentional.** They let a real database replace the in-memory store by changing only `task-container.ts`, and let the service be tested with a fake repository and clock. For a disposable project with no expected database, keeping the logic in the router would be simpler; this separation is a deliberate trade-off.
 
 ## Tests
 
