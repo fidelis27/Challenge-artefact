@@ -2,6 +2,12 @@
 
 A small task manager built with **Next.js 15 (App Router)** and **tRPC v11**. Tasks live in server memory (no database). The list is server-side rendered and loads more tasks as you scroll.
 
+## Screenshots
+
+- [Task list](docs/screenshots/list.png)
+- [Form validation showing the required-title error](docs/screenshots/form-validation.png)
+- [Success toast after deleting a task](docs/screenshots/delete-toast.png)
+
 ## Running it
 
 Requires Node.js 20 or newer.
