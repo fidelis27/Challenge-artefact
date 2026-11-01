@@ -27,14 +27,14 @@ export function TaskItem({ task, isDeleting, disabled, onDelete }: Props) {
       <div className={styles.actions}>
         <Link
           href={`/tasks/${task.id}/edit`}
-          className="button buttonSecondary"
+          className="button buttonSecondary buttonSmall"
           aria-label={`Edit task ${task.title}`}
         >
           Edit
         </Link>
         <button
           type="button"
-          className="button buttonDanger"
+          className="button buttonDanger buttonSmall"
           disabled={disabled}
           aria-label={`Delete task ${task.title}`}
           onClick={() => onDelete(task)}

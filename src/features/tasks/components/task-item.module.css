@@ -3,14 +3,16 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 16px 20px;
+  transition: background-color 0.12s ease;
+}
+
+.item:hover {
+  background: var(--surface-hover);
 }
 
 .item[aria-busy="true"] {
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .content {
@@ -18,21 +20,31 @@
 }
 
 .title {
-  margin: 0 0 4px;
-  font-size: 1.05rem;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
 .description {
-  margin: 0 0 8px;
+  margin: 2px 0 0;
   color: var(--muted);
   overflow-wrap: anywhere;
-  white-space: pre-wrap;
+  /* Long descriptions stay readable in the list without making rows uneven. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .date {
-  font-size: 0.8rem;
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8125rem;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .actions {
@@ -41,8 +53,23 @@
   flex-shrink: 0;
 }
 
+/* On devices with a mouse, actions appear on hover or keyboard focus. Touch devices always show them. */
+@media (hover: hover) {
+  .actions {
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+
+  .item:hover .actions,
+  .item:focus-within .actions {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 520px) {
   .item {
     flex-direction: column;
+    gap: 12px;
+    padding: 16px;
   }
 }
