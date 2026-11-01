@@ -30,6 +30,7 @@ Other scripts:
 | ------------------- | ------------------------------------ |
 | `npm test`          | Runs the unit tests (Vitest)         |
 | `npm run typecheck` | Type-checks the whole project        |
+| `npm run test:e2e`  | Runs the end-to-end tests (Playwright) |
 
 The app starts with 25 sample tasks so the infinite scroll can be tried right away. Set `SEED_TASKS=0` for an empty list (or any other number).
 
@@ -127,13 +128,14 @@ Business rules are small pure functions, tested in isolation:
 
 ## Tests
 
-`npm test` runs 34 unit tests covering the pure rules, the service (with a fake clock and a fresh repository per test) and the router (validation errors, `NOT_FOUND`, and a full CRUD cycle).
+`npm test` runs the unit tests covering the pure rules, the service (with a fake clock and a fresh repository per test) and the router (validation errors, `NOT_FOUND`, and a full CRUD cycle).
 
-Because the service receives its repository by injection, tests never share state and need no reset helpers.
+Run the end-to-end tests with `npx playwright install chromium` once, then `npm run test:e2e`. They cover server-side rendering, form validation, task creation/edit/deletion, the 404 page and infinite scroll.
+
+The Playwright tests run in series because all requests share one Node.js process with in-memory data. Tests that create or delete tasks use unique titles and never delete sample tasks.
 
 ## Possible next steps
 
 - A database-backed `TaskRepository` (for example Postgres with Drizzle) for real persistence and multi-instance deployments.
 - Optimistic updates for delete.
-- Component tests (Testing Library) and an end-to-end test (Playwright) for the scroll behavior.
 - Search, filters and a "completed" status.
