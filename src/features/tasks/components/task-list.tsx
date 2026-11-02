@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { ConfirmDialog } from "@/shared/components/confirm-dialog";
 import { ErrorBanner } from "@/shared/components/error-banner";
 import type { Task } from "../domain/task";
 import { useDeleteTask } from "../hooks/use-delete-task";
@@ -13,11 +15,14 @@ import styles from "./task-list.module.css";
 export function TaskList() {
   const list = useTaskList();
   const deleteTask = useDeleteTask();
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
-  function handleDelete(task: Task) {
-    if (window.confirm(`Delete the task "${task.title}"?`)) {
-      deleteTask.mutate({ id: task.id });
-    }
+  function confirmDelete() {
+    if (!taskToDelete) return;
+
+    const taskId = taskToDelete.id;
+    setTaskToDelete(null);
+    deleteTask.mutate({ id: taskId });
   }
 
   if (list.isLoading) {
@@ -60,10 +65,23 @@ export function TaskList() {
             task={task}
             isDeleting={deletingId === task.id}
             disabled={deleteTask.isPending}
-            onDelete={handleDelete}
+            onDelete={setTaskToDelete}
           />
         ))}
       </ul>
+
+      <ConfirmDialog
+        open={taskToDelete !== null}
+        title="Delete task?"
+        description={
+          taskToDelete
+            ? `Are you sure you want to delete “${taskToDelete.title}”? This action cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete task"
+        onConfirm={confirmDelete}
+        onCancel={() => setTaskToDelete(null)}
+      />
 
       {/* Observed by the infinite-scroll hook: reaching it loads the next page. */}
       <div ref={list.sentinelRef} aria-hidden="true" />

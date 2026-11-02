@@ -50,15 +50,27 @@ test("edits a task", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("deletes a task after confirmation", async ({ page }) => {
+test("deletes a task after modal confirmation", async ({ page }) => {
   const title = uniqueTitle();
   await page.goto("/tasks/new");
   await page.getByLabel("Title").fill(title);
   await page.getByRole("button", { name: "Create task" }).click();
 
   await expect(page.getByRole("heading", { name: title, exact: true }).first()).toBeVisible();
-  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: `Delete task ${title}` }).click();
+
+  const dialog = page.getByRole("alertdialog", { name: "Delete task?" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText(title);
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: `Delete task ${title}` }).click();
+  await page
+    .getByRole("alertdialog", { name: "Delete task?" })
+    .getByRole("button", { name: "Delete task" })
+    .click();
 
   await expect(page.getByText("Task deleted successfully.")).toBeVisible();
   await expect(page.getByRole("heading", { name: title, exact: true })).toHaveCount(0);
